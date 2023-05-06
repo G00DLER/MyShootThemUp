@@ -27,6 +27,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float TraceMaxDistance = 1500.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponDamage", meta = (ClampMin = "1.0", ClampMax = "50.0"))
+	float HitWeaponDamage = 10.0f;
 	
 	virtual void BeginPlay() override;
 
@@ -37,4 +40,5 @@ protected:
 	FVector GetMuzzleWorldLocation() const;
 	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 	void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+	void MakeDamage(const FHitResult& HitResult);
 };

@@ -38,3 +38,8 @@ void USTUWeaponComponent::Fire()
 
 	CurrentWeapon->Fire();
 }
+
+void USTUWeaponComponent::DestroyWeapon(float TimerLifeSpan)
+{
+	CurrentWeapon->SetLifeSpan(TimerLifeSpan);
+}

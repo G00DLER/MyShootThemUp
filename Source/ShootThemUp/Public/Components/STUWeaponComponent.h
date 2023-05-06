@@ -18,6 +18,8 @@ public:
 
 	void Fire();
 
+	void DestroyWeapon(float TimerLifeSpan);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<ASTUBaseWeapon> WeaponClass;

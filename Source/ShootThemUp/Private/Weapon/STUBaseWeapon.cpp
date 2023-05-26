@@ -7,6 +7,8 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All)
 
@@ -21,7 +23,7 @@ ASTUBaseWeapon::ASTUBaseWeapon()
 void ASTUBaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	check(WeaponMesh);
 	checkf(DefaultAmmo.Bullets > 0, TEXT("Bullets count couldn't be less or equal zero"));
 	checkf(DefaultAmmo.Clips > 0, TEXT("Clips count couldn't be less or equal zero"));
@@ -30,23 +32,24 @@ void ASTUBaseWeapon::BeginPlay()
 
 void ASTUBaseWeapon::StartFire()
 {
-	
+
 }
 
 void ASTUBaseWeapon::StopFire()
 {
-	
+
 }
 
 void ASTUBaseWeapon::MakeShot()
 {
-	
+
 }
 
 APlayerController* ASTUBaseWeapon::GetPlayerController() const
 {
 	const auto Player = Cast<ACharacter>(GetOwner());
-	if (!Player) return nullptr;
+	if (!Player)
+		return nullptr;
 
 	return Player->GetController<APlayerController>();
 }
@@ -54,8 +57,9 @@ APlayerController* ASTUBaseWeapon::GetPlayerController() const
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
 	const auto Controller = GetPlayerController();
-	if (!Controller) return false;
-	
+	if (!Controller)
+		return false;
+
 	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
 	return true;
 }
@@ -69,8 +73,9 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 {
 	FVector ViewLocation;
 	FRotator ViewRotation;
-	if (!GetPlayerViewPoint(ViewLocation, ViewRotation)) return false;
-	
+	if (!GetPlayerViewPoint(ViewLocation, ViewRotation))
+		return false;
+
 	TraceStart = ViewLocation;
 	const FVector ShootDirection = ViewRotation.Vector();
 	TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
@@ -79,12 +84,13 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 
 void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const
 {
-	if (!GetWorld()) return;
-	
+	if (!GetWorld())
+		return;
+
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(GetOwner());
 	CollisionParams.bReturnPhysicalMaterial = true;
-	
+
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, CollisionParams);
 }
 
@@ -144,12 +150,13 @@ void ASTUBaseWeapon::LogAmmo()
 bool ASTUBaseWeapon::IsAmmoFull() const
 {
 	return CurrentAmmo.Clips == DefaultAmmo.Clips && //
-		CurrentAmmo.Bullets == DefaultAmmo.Bullets;
+	       CurrentAmmo.Bullets == DefaultAmmo.Bullets;
 }
 
 bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 {
-	if (CurrentAmmo.Infinite || IsAmmoFull() || ClipsAmount <= 0) return false;
+	if (CurrentAmmo.Infinite || IsAmmoFull() || ClipsAmount <= 0)
+		return false;
 
 	if (IsAmmoEmpty())
 	{
@@ -179,4 +186,14 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 	}
 
 	return true;
+}
+
+UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleFX()
+{
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX, //
+		WeaponMesh,                                        //
+		MuzzleSocketName,                                  //
+		FVector::ZeroVector,                               //
+		FRotator::ZeroRotator,                             //
+		EAttachLocation::SnapToTarget, true);
 }

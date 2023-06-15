@@ -20,6 +20,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 	UBehaviorTree* BehaviorTreeAsset;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UWidgetComponent* HealthWidgetComponent;
@@ -31,4 +33,7 @@ protected:
 	
 	virtual void OnDeath() override;
 	virtual void OnHealthChanged(float Health, float HealthDelta) override;
+
+private:
+	void UpdateHealthWidgetVisibility();
 };

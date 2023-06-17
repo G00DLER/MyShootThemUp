@@ -68,7 +68,7 @@ void ASTUAICharacter::UpdateHealthWidgetVisibility()
 		!GetWorld()->GetFirstPlayerController()  || //
 		!GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()) return;
 	
-	const auto PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	const float Distance = FVector::Distance(PlayerLocation, GetActorLocation());
+	const auto PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()->GetActorLocation();
+	const auto Distance = FVector::Distance(PlayerLocation, GetActorLocation());
 	HealthWidgetComponent->SetVisibility(Distance < HealthVisibilityDistance, true);
 }

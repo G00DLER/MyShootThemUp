@@ -8,6 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "STUGameInstance.h"
 #include "Menu/UI/STULevelItemWidget.h"
+#include "Sound/SoundCue.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUMenuWidget, All, All)
 
@@ -80,6 +81,7 @@ void USTUMenuWidget::OnLevelSelected(const FLevelData& Data)
 void USTUMenuWidget::OnStartGame()
 {
 	PlayAnimation(HideAnimation);
+	UGameplayStatics::PlaySound2D(GetWorld(), StartGameSound, 30.0f);
 }
 
 void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
